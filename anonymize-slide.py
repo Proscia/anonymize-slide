@@ -47,6 +47,7 @@ DOUBLE = 12
 LONG8 = 16
 
 # TIFF tags
+SOFTWARE = 305
 IMAGE_DESCRIPTION = 270
 STRIP_OFFSETS = 273
 STRIP_BYTE_COUNTS = 279
@@ -495,9 +496,11 @@ def do_aperio_svs(filename):
 
 def do_philips_tif(filename):
     with TiffFile(filename) as fh:
-        # Check for TIF file
+        # Check for Philips TIF file
         try:
-            desc0 = fh.directories[0].entries[IMAGE_DESCRIPTION].value()
+            software = fh.directories[0].entries[SOFTWARE].value()
+            if not software.startswith('Philips'):
+                raise UnrecognizedFile
         except KeyError:
             raise UnrecognizedFile
 
